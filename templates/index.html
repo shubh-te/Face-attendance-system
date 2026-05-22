@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Face Attendance</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-decor-1"></div>
+    <div class="background-decor-2"></div>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="glass-effect">
+            <h1><i class="fa-solid fa-users-viewfinder"></i> Smart Face Attendance</h1>
+            <p>Next-Gen Artificial Intelligence Dashboard</p>
+        </header>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                  <div class="alert {{ category }}">
+                      <i class="fa-solid fa-circle-info"></i> {{ message }}
+                  </div>
+                {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <!-- Panels Container -->
+        <div class="panels">
+            
+            <!-- Registration Panel -->
+            <div class="card glass-effect">
+                <h2><i class="fa-solid fa-user-plus"></i> Register Student</h2>
+                <p>Register a new face into the system.</p>
+                <form action="/register" method="POST">
+                    <div class="input-group">
+                        <label for="name">Student Name</label>
+                        <div class="input-icon">
+                            <i class="fa-regular fa-user"></i>
+                            <input type="text" name="name" id="name" required placeholder="e.g. Rahul Sharma">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" onclick="showLoader()">
+                        <i class="fa-solid fa-camera-retro"></i> Start Registration
+                    </button>
+                    <small>Auto-assigns ID. Captures 1 HD sample.</small>
+                </form>
+            </div>
+
+            <!-- Attendance Panel -->
+            <div class="card glass-effect">
+                <h2><i class="fa-solid fa-clipboard-check"></i> Mark Attendance</h2>
+                <p>Turn on webcam for real-time face tracking.</p>
+                <div class="attendance-actions">
+                    <form action="/mark_attendance" method="POST">
+                        <button type="submit" class="btn btn-success" onclick="showLoader()">
+                            <i class="fa-solid fa-face-scan"></i> Start Scanner
+                        </button>
+                    </form>
+                </div>
+                <small>Look straight into the camera. Press 'Q' to quit.</small>
+            </div>
+        </div>
+
+        <!-- Attendance Records Table -->
+        <div class="table-container glass-effect">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 15px;">
+                <h2 style="margin: 0;"><i class="fa-solid fa-table-list"></i> {{ table_title }}</h2>
+                <form action="/" method="GET" style="display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap;">
+                    <label for="month" style="font-weight: 500;">Month:</label>
+                    <select id="month" name="month" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-family: 'Poppins', sans-serif;" onchange="if(this.value) document.getElementById('date').value='';">
+                        <option value="" {% if not selected_month %}selected{% endif %}>Select...</option>
+                        {% for m in available_months %}
+                        <option value="{{ m.value }}" {% if selected_month == m.value %}selected{% endif %}>{{ m.label }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="date" style="font-weight: 500; margin-left:10px;">Date:</label>
+                    <input type="date" id="date" name="date" value="{{ selected_date if selected_date else '' }}" style="padding: 8px; border-radius: 5px; border: 1px solid #ccc; font-family: 'Poppins', sans-serif;" onchange="if(this.value) document.getElementById('month').value='';">
+
+                    <button type="submit" class="btn btn-primary" style="padding: 8px 15px; margin: 0;"><i class="fa-solid fa-filter"></i> Filter</button>
+                    {% if selected_month or selected_date %}
+                    <a href="/" class="btn" style="padding: 8px 15px; background: #6c757d; color: white; text-decoration: none; border-radius: 8px; margin: 0;"><i class="fa-solid fa-xmark"></i> Clear</a>
+                    {% endif %}
+                </form>
+            </div>
+            {% if records %}
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th><i class="fa-solid fa-hashtag"></i> ID</th>
+                            <th><i class="fa-solid fa-user"></i> Name</th>
+                            <th><i class="fa-solid fa-calendar-days"></i> Month</th>
+                            <th><i class="fa-regular fa-calendar"></i> Date</th>
+                            <th><i class="fa-regular fa-clock"></i> Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in records %}
+                        <tr>
+                            <td><span class="badge">{{ record.Id }}</span></td>
+                            <td class="fw-500">{{ record.Name }}</td>
+                            <td>{{ record.Month }}</td>
+                            <td>{{ record.Date }}</td>
+                            <td><span class="text-success fw-500">{{ record.Time }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-data-box">
+                <img src="https://cdni.iconscout.com/illustration/premium/thumb/folder-is-empty-4064360-3363921.png" alt="No data" width="120">
+                <p>No attendance records found for this selection.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Simple loading overlay -->
+    <div id="loader" class="loader-overlay" style="display: none;">
+        <div class="loader-spinner"></div>
+        <p>Initializing Machine Learning Module...</p>
+    </div>
+
+    <script>
+        function showLoader() {
+            document.getElementById('loader').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>
