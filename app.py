@@ -28,7 +28,7 @@ elif menu == "Register User":
         if uid and name:
             try:
                 uid = int(uid)
-                st.info("Naya camera window khuega... Camera ki taraf dekhein! (Process 60 photos lega)")
+                st.info("Naya camera window khuega... Camera ki taraf dekhein! (Process 10 photos lega aur turant train karega)")
                 
                 cam = cv2.VideoCapture(0)
                 harcascadePath = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
@@ -51,7 +51,7 @@ elif menu == "Register User":
                         
                     if cv2.waitKey(100) & 0xFF == ord('q'):
                         break
-                    elif sampleNum >= 60:
+                    elif sampleNum >= 10: # 10 samples lekar turant train karega
                         break
                         
                 cam.release()
@@ -126,7 +126,8 @@ elif menu == "Mark Attendance":
                         Id, conf = recognizer.predict(gray[y:y + h, x:x + w])
                         
                         # Confidence (Distance) kam hogi utna better match hai.
-                        if conf < 60:
+                        # Reduced to 45 for maximum accuracy to avoid wrong attendance.
+                        if conf < 45:
                             name_row = df.loc[df['Id'] == Id]['Name'].values
                             name = name_row[0] if len(name_row) > 0 else "Unknown"
                             display_text = f"{Id} - {name}"

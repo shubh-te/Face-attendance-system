@@ -12,7 +12,8 @@ app.secret_key = "super_secret_key" # Required for flash messages
 
 # Recognition confidence threshold (lower is more confident). Increase to allow
 # slightly higher values to be accepted if your model is noisy.
-RECOG_CONF_THRESHOLD = 80
+# Reduced to 45 for maximum accuracy to avoid wrong attendance.
+RECOG_CONF_THRESHOLD = 45
 
 
 def train_from_images():
@@ -190,7 +191,7 @@ def register():
                     
                 if cv2.waitKey(100) & 0xFF == ord('q'):
                     break
-                elif sampleNum >= 1: # Pehle 60 tha, ab bas 1 photo capture hogi
+                elif sampleNum >= 10: # Ab 10 photo capture hogi aur automatic train ho jayegi
                     break
                     
             cam.release()

@@ -29,7 +29,7 @@ def take_images(id, name):
             
         if cv2.waitKey(100) & 0xFF == ord('q'):
             break
-        elif sampleNum >= 60: # 60 samples lenge accurate training ke liye
+        elif sampleNum >= 10: # 10 samples lekar turant train karega
             break
             
     cam.release()
@@ -43,7 +43,10 @@ def take_images(id, name):
         if not file_exists:
             writer.writerow(['Id', 'Name'])
         writer.writerow(row)
-    print("Images successfully capture ho gayi hain.")
+    print("Images successfully capture ho gayi hain. Ab automatic training start ho rahi hai...")
+    
+    # Train automatically right after collecting images
+    train_images()
 
 def train_images():
     print("AI Model Train ho raha hai, kripya intezaar karein...")

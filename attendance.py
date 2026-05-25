@@ -37,7 +37,8 @@ def mark_attendance():
             Id, conf = recognizer.predict(gray[y:y + h, x:x + w])
             
             # Confidence check (Lower is better in LBPH)
-            if conf < 60:
+            # Reduced to 45 for maximum accuracy to avoid wrong attendance.
+            if conf < 45:
                 name_row = df.loc[df['Id'] == Id]['Name'].values
                 name = name_row[0] if len(name_row) > 0 else "Unknown"
                 display_text = f"{Id} - {name}"
