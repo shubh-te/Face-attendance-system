@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 Flask
 gunicorn
 opencv-python-headless
 face-recognition
 numpy
+=======
+Flask
+gunicorn
+opencv-python-headless
+face-recognition
+numpy
+>>>>>>> 0b39cdb902b77ac78d948136575b2de1ae592243
