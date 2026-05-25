@@ -183,3 +183,7 @@ elif menu == "View Attendance":
             st.warning("Aaj ki file hai but koi attendance nahi hai.")
     else:
         st.info("Aaj ka koi attendance record nahi mila.")
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+    app.run(debug=True)
