@@ -1,4 +1,3 @@
-Note: The tool simplified the command to `cat << 'EOF' > app.py
 from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory, jsonify
 import cv2
 import os
@@ -166,7 +165,7 @@ def register_api():
         
     ok, msg = train_from_images()
     if ok:
-        return jsonify({"message": f"Successfully Registered ;& Trained for {name}! (ID: {uid})"}), 200
+        return jsonify({"message": f"Successfully Registered & Trained for {name}! (ID: {uid})"}), 200
     else:
         return jsonify({"message": f"Failed to train: {msg}"}), 500
 
@@ -218,7 +217,6 @@ def attendance_api():
             
             for (x, y, w, h) in faces:
                 id_, conf = recognizer.predict(gray[y:y+h, x:x+w])
-                # Lower conf is better
                 if conf < RECOG_CONF_THRESHOLD:
                     name = id_name_map.get(id_, "Unknown")
                     if id_ not in logged_ids:
@@ -242,21 +240,3 @@ def attendance_api():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
-
-EOF` (terminal ID=e246f9b9-a8e6-4aff-9a7f-97d1b8b493e3). This is the output of running that command instead:
-PS C:\Users\HP\OneDrive\Desktop\Project college> cat << 'EOF' > app.py
-At line:1 char:6
-+ cat << 'EOF' > app.py
-+      ~
-Missing file specification after redirection operator.
-At line:1 char:5
-+ cat << 'EOF' > app.py
-+     ~
-The '<' operator is reserved for future use.
-At line:1 char:6
-+ cat << 'EOF' > app.py
-+      ~
-The '<' operator is reserved for future use.
-    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordEx 
-   ception
-    + FullyQualifiedErrorId : MissingFileSpecification
